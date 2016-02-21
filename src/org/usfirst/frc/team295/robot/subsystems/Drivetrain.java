@@ -20,7 +20,7 @@ public class Drivetrain extends PIDSubsystem{
 	AHRS ahrs = RobotMap.ahrs;
 	public static double direction;
 	public Drivetrain(){
-		super("Drivetrain",.05,0, 0);
+		super("Drivetrain",.025, .001, .03);
 		setAbsoluteTolerance(3);
 		getPIDController().setInputRange(0,360);
 		getPIDController().setOutputRange(-.5, .5);
@@ -44,7 +44,7 @@ public class Drivetrain extends PIDSubsystem{
 	@Override
 	protected void usePIDOutput(double output) {
 		// TODO Auto-generated method stub
-		System.out.println(direction);
+//		System.out.println(direction);
 		if(output<0){
 			drive.drive(-output, -1);
 		}

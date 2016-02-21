@@ -1,6 +1,7 @@
 package org.usfirst.frc.team295.robot.commands;
 
 import org.usfirst.frc.team295.robot.Globals;
+import org.usfirst.frc.team295.robot.Logger;
 import org.usfirst.frc.team295.robot.Robot;
 import org.usfirst.frc.team295.robot.RobotMap;
 import org.usfirst.frc.team295.robot.subsystems.Drivetrain;
@@ -17,8 +18,11 @@ public class PIDTurnLeft extends Command{
 	double dturnAmount;
 	double dAngle;
 	double dEndDiff;
+	double dCurrentTime;
+	double startTimeForTimer;
 	AHRS ahrs;
 	boolean done = false;
+	
 	/* Feature to make front the zero*/
 	
 	public PIDTurnLeft(double amount){
@@ -34,7 +38,8 @@ public class PIDTurnLeft extends Command{
 		ahrs = RobotMap.ahrs;
 		dpointAngle = ahrs.getAngle();
 		dendAngle = ahrs.getAngle() - dturnAmount;
-		dstartTime = Timer.getFPGATimestamp();
+		startTimeForTimer = Timer.getFPGATimestamp();
+		dCurrentTime = Timer.getFPGATimestamp();
     		if(dendAngle < 0){
     			dendAngle = 360 + dendAngle; 
     		}
@@ -47,12 +52,12 @@ public class PIDTurnLeft extends Command{
 		
 		if(Timer.getFPGATimestamp()>dstartTime){
 			dstartTime += 0.0020;
-			if(dpointAngle > dendAngle){
-				dpointAngle +=-.5;
+			if(dpointAngle > dendAngle -1){
+				dpointAngle +=-1;
 			}
 			else if(dpointAngle < (dendAngle - dturnAmount))
 			{
-				dpointAngle +=-.5;
+				dpointAngle +=-1;
 				if(dpointAngle < 0){
 					dpointAngle = 360 - dpointAngle;
 				}
@@ -63,7 +68,16 @@ public class PIDTurnLeft extends Command{
 			}
 		}
 		Robot.drivetrain.setSetpoint(dpointAngle);
-		
+	
+		Logger.getInstance().log("PIDTurn", 
+				Double.toString(Timer.getFPGATimestamp() - startTimeForTimer),
+				Double.toString(Robot.drivetrain.getPIDController().get()),
+				Double.toString(dAngle),
+				Double.toString(ahrs.getRawAccelX()),
+				Double.toString(ahrs.getRawAccelY())
+		);
+		System.out.println("Start time for Timer: " + startTimeForTimer);
+		System.out.println(Robot.getTimerValue());
 		System.out.println(
 				"Done ? : " + done +
 				" Error : " + Globals.dError + " " + 
@@ -75,7 +89,7 @@ public class PIDTurnLeft extends Command{
 	@Override
 	protected boolean isFinished() {
 		// TODO Auto-generated method stub
-		if(done){
+		if(done && Robot.drivetrain.onTarget() || Math.abs(ahrs.getAngle() - dendAngle) <3){
 			Globals.dError = dendAngle-ahrs.getAngle();
 			return true;
 		}

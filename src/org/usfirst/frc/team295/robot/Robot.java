@@ -2,6 +2,7 @@
 package org.usfirst.frc.team295.robot;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -29,18 +30,25 @@ public class Robot extends IterativeRobot {
 
     Command autonomousCommand;
     SendableChooser chooser;
+    public static Logger logger;
+    private static Timer sessionTimer  = null;
+    private static long sessionIteration = 0;
     AHRS ahrs;
 
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
      */
+    static{
+    	logger  = Logger.getInstance();
+    }
+    
     public void robotInit() {
 		RobotMap.init();
 		drivetrain  = new Drivetrain();
     	oi = new OI();
 		ahrs = RobotMap.ahrs;
-		
+		sessionTimer = new Timer();
 //        chooser = new SendableChooser();
 //        chooser.addDefault("Default Auto", new AutoTurn());
 ////        chooser.addObject("My Auto", new MyAutoCommand());
@@ -53,7 +61,14 @@ public class Robot extends IterativeRobot {
 	 * the robot is disabled.
      */
     public void disabledInit(){
-
+    	logger.endLog();
+    	
+    	sessionTimer.reset();
+		sessionIteration = 0;
+    }
+    public void enabledPeriodic(){
+    	sessionIteration++;
+    	sessionTimer.start();
     }
 	
 	public void disabledPeriodic() {
@@ -109,7 +124,7 @@ public class Robot extends IterativeRobot {
      */
     public void teleopPeriodic() {
         Scheduler.getInstance().run();
-        SmartDashboard.putNumber("Yaw", ahrs.getYaw());
+        enabledPeriodic();
         
     }
     
@@ -121,7 +136,18 @@ public class Robot extends IterativeRobot {
 //    	SmartDashboard.putData("PID Turn Left", new PIDTurnRight(90,-1));
 //		System.out.println(ahrs.getAngle());
         LiveWindow.run();
+        enabledPeriodic();
         RobotMap.driveTrain.tankDrive(-1* oi.joystick.getRawAxis(1), -1 * oi.joystick.getRawAxis(5));
 //        RobotMap.driveTrain.drive(-1* oi.joystick.getRawAxis(1), -1 * oi.joystick.getRawAxis(5));
+    }
+    public static double getTimerValue(){
+    	return sessionTimer.get();
+    }
+    
+    public static long getSessionIteration() {
+		return sessionIteration;
+	}
+    public static void logAutonomous(){
+    	
     }
 }

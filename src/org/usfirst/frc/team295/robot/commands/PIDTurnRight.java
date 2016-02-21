@@ -1,6 +1,7 @@
 package org.usfirst.frc.team295.robot.commands;
 
 import org.usfirst.frc.team295.robot.Globals;
+import org.usfirst.frc.team295.robot.Logger;
 import org.usfirst.frc.team295.robot.Robot;
 import org.usfirst.frc.team295.robot.RobotMap;
 import org.usfirst.frc.team295.robot.subsystems.Drivetrain;
@@ -19,6 +20,7 @@ public class PIDTurnRight extends Command{
 	double dEndDiff;
 	AHRS ahrs;
 	boolean done = false;
+	double dCurrentTime;
 	/* Feature to make front the zero*/
 	
 	public PIDTurnRight(double amount){
@@ -43,9 +45,9 @@ public class PIDTurnRight extends Command{
 	protected void execute() {
 		// TODO Auto-generated method stub
 		dAngle = ahrs.getAngle();
-		
-		if(Timer.getFPGATimestamp()>dstartTime){
-			dstartTime += 0.0025;
+		dCurrentTime = Timer.getFPGATimestamp();
+		if(dCurrentTime>dstartTime){
+			dstartTime += 0.025;
 			if(dpointAngle < dendAngle){
 				dpointAngle +=.5;
 			}
@@ -62,6 +64,16 @@ public class PIDTurnRight extends Command{
 		}
 		Robot.drivetrain.setSetpoint(dpointAngle);
 		
+		
+		Logger.getInstance().log(
+				"Turn",
+				String.valueOf(dCurrentTime-dstartTime), /* Time */
+				String.valueOf(dpointAngle - dAngle) /* Diff Point */
+//				String.valueOf(b),
+//				String.valueOf(b),
+//				String.valueOf(b),
+//				String.valueOf(b)
+				);
 		System.out.println(
 				"Error : " + Globals.dError + " " + 
 				"Speed : " +Robot.drivetrain.getPIDController().get()
