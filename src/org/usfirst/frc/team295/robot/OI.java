@@ -22,6 +22,8 @@ public class OI {
 	Button buttonTurn;
 	Button buttonDrive;
 	Button buttonReset;
+	Button buttonTurnO;
+	Button buttonAuto;
     //// CREATING BUTTONS
     // One type of button is a joystick button which is any button on a joystick.
     // You create one by telling it which joystick it's on and which button
@@ -50,13 +52,17 @@ public class OI {
     // button.whenReleased(new ExampleCommand());
 	public OI(){
 		joystick = new Joystick(0);
-//		buttonTurn = new JoystickButton(joystick,1);
+		buttonTurn = new JoystickButton(joystick,1);
 		buttonDrive  = new JoystickButton(joystick, 2);
 		buttonReset = new JoystickButton(joystick,3);
+		buttonTurnO = new JoystickButton(joystick,4);
+		buttonAuto = new JoystickButton(joystick,5);
 //		buttonTurn.whenPressed(new PIDTurn(90 + Globals.dError));
-//		buttonTurn.whenActive(new PIDTurnLeft(90));
-//		buttonDrive.whenPressed(new AutoDrive(1,.25,1));
-		buttonDrive.whenActive(new PIDTurnRight(90));
+		buttonTurn.whenPressed(new PIDTurnLeft(90));
+		buttonAuto.whenPressed(new Autonomous());
+		buttonTurnO.whenPressed(new PIDTurnRight(90));
+		buttonDrive.whenPressed(new AutoDrive(1,.25,1));
+//		buttonDrive.whenActive(new PIDTurnRight(90));
 		buttonReset.whenPressed(new Reset());
 		
 		SmartDashboard.putData("Autonomous", new Autonomous());

@@ -115,7 +115,6 @@ public class Logger {
 	
 	private String getLogHeader() {
 		return String.valueOf(System.currentTimeMillis())
-				+ LOGGER_DELIMETER + String.valueOf(Robot.getTimerValue())
 				+ LOGGER_DELIMETER + String.valueOf(Robot.getSessionIteration());
 	}
 	

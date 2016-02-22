@@ -22,7 +22,7 @@ public class Server implements Runnable{
 			try{
 				s = server.accept();
 				DataOutputStream dataOutputStream = new DataOutputStream(s.getOutputStream());
-				dataOutputStream.writeChars("Angle" + RobotMap.ahrs.getAngle());
+				dataOutputStream.writeChars("A;" + RobotMap.ahrs.getAngle());
 				System.out.println("Client Connected");
 				s.close();
 			}catch (SocketTimeoutException s){

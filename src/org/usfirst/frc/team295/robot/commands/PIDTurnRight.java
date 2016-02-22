@@ -21,6 +21,7 @@ public class PIDTurnRight extends Command{
 	AHRS ahrs;
 	boolean done = false;
 	double dCurrentTime;
+	double startTimeForTimer;
 	/* Feature to make front the zero*/
 	
 	public PIDTurnRight(double amount){
@@ -36,6 +37,7 @@ public class PIDTurnRight extends Command{
 		dpointAngle = ahrs.getAngle();
 		dendAngle = dturnAmount + ahrs.getAngle();
 		dstartTime = Timer.getFPGATimestamp();
+		startTimeForTimer = Timer.getFPGATimestamp();
     		if(dendAngle> 360){
     			dendAngle = dturnAmount -(360-ahrs.getAngle()); 
     		}
@@ -64,16 +66,16 @@ public class PIDTurnRight extends Command{
 		}
 		Robot.drivetrain.setSetpoint(dpointAngle);
 		
-		
-		Logger.getInstance().log(
-				"Turn",
-				String.valueOf(dCurrentTime-dstartTime), /* Time */
-				String.valueOf(dpointAngle - dAngle) /* Diff Point */
-//				String.valueOf(b),
-//				String.valueOf(b),
-//				String.valueOf(b),
-//				String.valueOf(b)
-				);
+		Logger.getInstance().log("PIDTurnRight", 
+				Double.toString(Timer.getFPGATimestamp() - startTimeForTimer),
+				Double.toString(Robot.drivetrain.getPIDController().get()),
+				Double.toString(dAngle),
+				Double.toString(ahrs.getRawAccelX()),
+				Double.toString(ahrs.getRawAccelY()),
+				Double.toString(Robot.drivetrain.getPIDController().getP()),
+				Double.toString(Robot.drivetrain.getPIDController().getI()),
+				Double.toString(Robot.drivetrain.getPIDController().getD())
+		);
 		System.out.println(
 				"Error : " + Globals.dError + " " + 
 				"Speed : " +Robot.drivetrain.getPIDController().get()
@@ -84,7 +86,7 @@ public class PIDTurnRight extends Command{
 	@Override
 	protected boolean isFinished() {
 		// TODO Auto-generated method stub
-		if(done && Robot.drivetrain.onTarget()){
+		if(done && Robot.drivetrain.onTarget() || Math.abs(ahrs.getAngle() - dendAngle) <3){
 			Globals.dError = dendAngle-ahrs.getAngle();
 			return true;
 		}

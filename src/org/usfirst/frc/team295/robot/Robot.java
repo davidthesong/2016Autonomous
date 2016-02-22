@@ -130,31 +130,33 @@ public class Robot extends IterativeRobot {
     	
     	sessionTimer.reset();
 		sessionIteration = 0;
+		
+		
     }
     public void enabledPeriodic() throws IOException{
     	sessionIteration++;
     	sessionTimer.start();
   
-    	if(Robot.oi.joystick.getRawButton(1)){
-    		cameraDirection = !cameraDirection;
-//    		if(cameraDirection){
-//    			cameraBack.stopCapture();
-//    			cameraFront.startCapture();
-//    		}
-//    		else{
-//    			cameraFront.stopCapture();
-//    			cameraBack.startCapture();
-//    		}
-    	}
-    	if(cameraDirection){
-    		cameraFront.getImage(frame);
-       
-    	}
-    	else{
-    		cameraBack.getImage(frame);
-    	}
-    	server.setImage(frame);
-    	
+//    	if(Robot.oi.joystick.getRawButton(1)){
+//    		cameraDirection = !cameraDirection;
+////    		if(cameraDirection){
+////    			cameraBack.stopCapture();
+////    			cameraFront.startCapture();
+////    		}
+////    		else{
+////    			cameraFront.stopCapture();
+////    			cameraBack.startCapture();
+////    		}
+//    	}
+//    	if(cameraDirection){
+//    		cameraFront.getImage(frame);
+//       
+//    	}
+//    	else{
+//    		cameraBack.getImage(frame);
+//    	}
+//    	server.setImage(frame);
+//    	
     	
 //    	
 //    	NIVision.IMAQdxGrab(currSession, frame, 1);

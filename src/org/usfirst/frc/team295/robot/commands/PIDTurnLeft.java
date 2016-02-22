@@ -69,12 +69,15 @@ public class PIDTurnLeft extends Command{
 		}
 		Robot.drivetrain.setSetpoint(dpointAngle);
 	
-		Logger.getInstance().log("PIDTurn", 
+		Logger.getInstance().log("PIDTurnLeft", 
 				Double.toString(Timer.getFPGATimestamp() - startTimeForTimer),
 				Double.toString(Robot.drivetrain.getPIDController().get()),
 				Double.toString(dAngle),
 				Double.toString(ahrs.getRawAccelX()),
-				Double.toString(ahrs.getRawAccelY())
+				Double.toString(ahrs.getRawAccelY()),
+				Double.toString(Robot.drivetrain.getPIDController().getP()),
+				Double.toString(Robot.drivetrain.getPIDController().getI()),
+				Double.toString(Robot.drivetrain.getPIDController().getD())
 		);
 		System.out.println("Start time for Timer: " + startTimeForTimer);
 		System.out.println(Robot.getTimerValue());
