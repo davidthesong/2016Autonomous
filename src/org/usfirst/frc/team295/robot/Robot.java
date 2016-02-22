@@ -1,20 +1,37 @@
 
 package org.usfirst.frc.team295.robot;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
+
+import javax.swing.InputMap;
+
 import org.usfirst.frc.team295.robot.commands.AutoTurn;
 import org.usfirst.frc.team295.robot.commands.PIDTurnRight;
 import org.usfirst.frc.team295.robot.subsystems.Drivetrain;
 import org.usfirst.frc.team295.robot.subsystems.ExampleSubsystem;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.ni.vision.NIVision;
+import com.ni.vision.NIVision.Image;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.vision.USBCamera;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -33,7 +50,13 @@ public class Robot extends IterativeRobot {
     public static Logger logger;
     private static Timer sessionTimer  = null;
     private static long sessionIteration = 0;
+    boolean cameraDirection; /* true = front; false = back */
+    Image frame;
+    USBCamera cameraFront;
+    USBCamera cameraBack;
     AHRS ahrs;
+    ByteBuffer data;
+    Socket s;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -42,13 +65,55 @@ public class Robot extends IterativeRobot {
     static{
     	logger  = Logger.getInstance();
     }
+    CameraServer server;
     
     public void robotInit() {
+//    	data = ByteBuffer.allocate(100);
 		RobotMap.init();
 		drivetrain  = new Drivetrain();
     	oi = new OI();
 		ahrs = RobotMap.ahrs;
 		sessionTimer = new Timer();
+		
+		cameraDirection = true;
+		cameraFront = new USBCamera("cam0");
+		cameraFront.openCamera();
+		cameraFront.setFPS(30);
+		//TODO: SET SIZE OF DISPLAY
+		cameraFront.updateSettings();
+		cameraFront.startCapture();
+		
+		cameraBack = new USBCamera("cam1");
+		cameraBack.openCamera();
+		cameraBack.setFPS(30);
+		cameraBack.updateSettings();
+		ServerSocket serversocket = null;
+		try {
+			serversocket = new ServerSocket(5800);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Thread t = new Thread(new Server(serversocket));
+		t.start();
+		
+//		cameraBack.startCapture();
+		
+		frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
+		server = CameraServer.getInstance();
+        server.setQuality(20);
+        
+        
+//        //the camera name (ex "cam0") can be found through the roborio web interface
+//        server.startAutomaticCapture("cam0");
+        
+//        sessionFront = NIVision.IMAQdxOpenCamera("cam0", NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+//        sessionBack = NIVision.IMAQdxOpenCamera("cam1", NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+        
+//        currSession = sessionFront;
+        
+//        NIVision.IMAQdxConfigureGrab(currSession);
 //        chooser = new SendableChooser();
 //        chooser.addDefault("Default Auto", new AutoTurn());
 ////        chooser.addObject("My Auto", new MyAutoCommand());
@@ -66,9 +131,36 @@ public class Robot extends IterativeRobot {
     	sessionTimer.reset();
 		sessionIteration = 0;
     }
-    public void enabledPeriodic(){
+    public void enabledPeriodic() throws IOException{
     	sessionIteration++;
     	sessionTimer.start();
+  
+    	if(Robot.oi.joystick.getRawButton(1)){
+    		cameraDirection = !cameraDirection;
+//    		if(cameraDirection){
+//    			cameraBack.stopCapture();
+//    			cameraFront.startCapture();
+//    		}
+//    		else{
+//    			cameraFront.stopCapture();
+//    			cameraBack.startCapture();
+//    		}
+    	}
+    	if(cameraDirection){
+    		cameraFront.getImage(frame);
+       
+    	}
+    	else{
+    		cameraBack.getImage(frame);
+    	}
+    	server.setImage(frame);
+    	
+    	
+//    	
+//    	NIVision.IMAQdxGrab(currSession, frame, 1);
+//    	CameraServer.getInstance().setImage(frame);
+    	
+    	
     }
 	
 	public void disabledPeriodic() {
@@ -124,7 +216,12 @@ public class Robot extends IterativeRobot {
      */
     public void teleopPeriodic() {
         Scheduler.getInstance().run();
-        enabledPeriodic();
+        try {
+			enabledPeriodic();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         
     }
     
@@ -136,7 +233,12 @@ public class Robot extends IterativeRobot {
 //    	SmartDashboard.putData("PID Turn Left", new PIDTurnRight(90,-1));
 //		System.out.println(ahrs.getAngle());
         LiveWindow.run();
-        enabledPeriodic();
+        try {
+			enabledPeriodic();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         RobotMap.driveTrain.tankDrive(-1* oi.joystick.getRawAxis(1), -1 * oi.joystick.getRawAxis(5));
 //        RobotMap.driveTrain.drive(-1* oi.joystick.getRawAxis(1), -1 * oi.joystick.getRawAxis(5));
     }

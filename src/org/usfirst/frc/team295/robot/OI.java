@@ -50,11 +50,11 @@ public class OI {
     // button.whenReleased(new ExampleCommand());
 	public OI(){
 		joystick = new Joystick(0);
-		buttonTurn = new JoystickButton(joystick,1);
+//		buttonTurn = new JoystickButton(joystick,1);
 		buttonDrive  = new JoystickButton(joystick, 2);
 		buttonReset = new JoystickButton(joystick,3);
 //		buttonTurn.whenPressed(new PIDTurn(90 + Globals.dError));
-		buttonTurn.whenActive(new PIDTurnLeft(90));
+//		buttonTurn.whenActive(new PIDTurnLeft(90));
 //		buttonDrive.whenPressed(new AutoDrive(1,.25,1));
 		buttonDrive.whenActive(new PIDTurnRight(90));
 		buttonReset.whenPressed(new Reset());
