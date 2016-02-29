@@ -52,11 +52,13 @@ public class Robot extends IterativeRobot {
     private static long sessionIteration = 0;
     boolean cameraDirection; /* true = front; false = back */
     Image frame;
-    USBCamera cameraFront;
-    USBCamera cameraBack;
+    public USBCamera cameraFront;
+    public USBCamera cameraBack;
     AHRS ahrs;
     ByteBuffer data;
     Socket s;
+    ServerSocket serversocket = null;
+    Thread ServerThread;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -74,68 +76,52 @@ public class Robot extends IterativeRobot {
     	oi = new OI();
 		ahrs = RobotMap.ahrs;
 		sessionTimer = new Timer();
-		
-		cameraDirection = true;
-		cameraFront = new USBCamera("cam0");
-		cameraFront.openCamera();
-		cameraFront.setFPS(30);
-		//TODO: SET SIZE OF DISPLAY
-		cameraFront.updateSettings();
-		cameraFront.startCapture();
-		
-		cameraBack = new USBCamera("cam1");
-		cameraBack.openCamera();
-		cameraBack.setFPS(30);
-		cameraBack.updateSettings();
-		ServerSocket serversocket = null;
+
 		try {
 			serversocket = new ServerSocket(5800);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+//		cameraDirection = true;
+//		cameraFront = RobotMap.cameraFront;
+//		cameraFront.openCamera();
+//		cameraFront.setFPS(30);
+		//TODO: SET SIZE OF DISPLAY
+//		cameraFront.updateSettings();
+//		cameraFront.startCapture();
+//		
+//		cameraBack = new USBCamera("cam1");
+//		cameraBack.openCamera();
+//		cameraBack.setFPS(30);
+//		cameraBack.updateSettings();
 		
-		Thread t = new Thread(new Server(serversocket));
-		t.start();
 		
-//		cameraBack.startCapture();
 		
-		frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
-		server = CameraServer.getInstance();
-        server.setQuality(20);
-        
+		
+//		
+//		frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
+//		server = CameraServer.getInstance();
+//        server.setQuality(20);
+    }
         
 //        //the camera name (ex "cam0") can be found through the roborio web interface
 //        server.startAutomaticCapture("cam0");
-        
-//        sessionFront = NIVision.IMAQdxOpenCamera("cam0", NIVision.IMAQdxCameraControlMode.CameraControlModeController);
-//        sessionBack = NIVision.IMAQdxOpenCamera("cam1", NIVision.IMAQdxCameraControlMode.CameraControlModeController);
-        
-//        currSession = sessionFront;
-        
-//        NIVision.IMAQdxConfigureGrab(currSession);
-//        chooser = new SendableChooser();
-//        chooser.addDefault("Default Auto", new AutoTurn());
-////        chooser.addObject("My Auto", new MyAutoCommand());
-//        SmartDashboard.putData("Auto mode", chooser);
-    }
-	
-	/**
-     * This function is called once each time the robot enters Disabled mode.
-     * You can use it to reset any subsystem information you want to clear when
-	 * the robot is disabled.
-     */
     public void disabledInit(){
     	logger.endLog();
     	
     	sessionTimer.reset();
 		sessionIteration = 0;
+		ahrs.resetDisplacement();
 		
+		if(ServerThread != null){
+			ServerThread.interrupt();
+		}
 		
     }
     public void enabledPeriodic() throws IOException{
-    	sessionIteration++;
-    	sessionTimer.start();
+//    	sessionIteration++;
+//    	sessionTimer.start();
   
 //    	if(Robot.oi.joystick.getRawButton(1)){
 //    		cameraDirection = !cameraDirection;
@@ -150,14 +136,14 @@ public class Robot extends IterativeRobot {
 //    	}
 //    	if(cameraDirection){
 //    		cameraFront.getImage(frame);
-//       
+//    		System.out.println(frame.toString());
 //    	}
 //    	else{
 //    		cameraBack.getImage(frame);
 //    	}
+//    	cameraFront.getImage(frame);
 //    	server.setImage(frame);
-//    	
-    	
+
 //    	
 //    	NIVision.IMAQdxGrab(currSession, frame, 1);
 //    	CameraServer.getInstance().setImage(frame);
@@ -211,6 +197,11 @@ public class Robot extends IterativeRobot {
         // continue until interrupted by another command, remove
         // this line or comment it out.
         if (autonomousCommand != null) autonomousCommand.cancel();
+        
+        ServerThread = new Thread(new Server(serversocket));
+		ServerThread.start();
+        double dZeroAngle = RobotMap.ahrs.getAngle();
+        
     }
 
     /**
@@ -235,13 +226,17 @@ public class Robot extends IterativeRobot {
 //    	SmartDashboard.putData("PID Turn Left", new PIDTurnRight(90,-1));
 //		System.out.println(ahrs.getAngle());
         LiveWindow.run();
-        try {
-			enabledPeriodic();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//        try {
+//			enabledPeriodic();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//        System.out.println("y"+ahrs.getDisplacementY());
+//        System.out.println("x"+ahrs.getDisplacementX());
+//        System.out.println("z"+ahrs.getDisplacementZ());
         RobotMap.driveTrain.tankDrive(-1* oi.joystick.getRawAxis(1), -1 * oi.joystick.getRawAxis(5));
+        System.out.println(ahrs.getYaw());
 //        RobotMap.driveTrain.drive(-1* oi.joystick.getRawAxis(1), -1 * oi.joystick.getRawAxis(5));
     }
     public static double getTimerValue(){

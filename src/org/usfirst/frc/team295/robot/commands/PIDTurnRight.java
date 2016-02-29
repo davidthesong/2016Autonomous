@@ -86,7 +86,7 @@ public class PIDTurnRight extends Command{
 	@Override
 	protected boolean isFinished() {
 		// TODO Auto-generated method stub
-		if(done && Robot.drivetrain.onTarget() || Math.abs(ahrs.getAngle() - dendAngle) <3){
+		if(done && Robot.drivetrain.onTarget() || Math.abs(ahrs.getAngle() - dendAngle) <1){
 			Globals.dError = dendAngle-ahrs.getAngle();
 			return true;
 		}

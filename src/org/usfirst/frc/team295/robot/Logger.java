@@ -95,12 +95,12 @@ public class Logger {
 	 * Closes the existing log file, and prepares a new log file.
 	 */
 	public void endLog() {
-		if (Robot.getSessionIteration() < 1) {
-			outputFile.delete(); // If no iterations have passed, delete log
-			System.out.println("Deleted empty log at " + outputFile.getAbsolutePath());
-		} else {
-			System.out.println("Completed log at " + outputFile.getAbsolutePath());
-		}
+//		if (Robot.getSessionIteration() < 1) {
+//			outputFile.delete(); // If no iterations have passed, delete log
+//			System.out.println("Deleted empty log at " + outputFile.getAbsolutePath());
+//		} else {
+//			System.out.println("Completed log at " + outputFile.getAbsolutePath());
+//		}
 		
 		try {
 			outputWriter.flush();

@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.VictorSP;
+import edu.wpi.first.wpilibj.vision.USBCamera;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -23,25 +25,31 @@ public class RobotMap {
     // number and the module. For example you with a rangefinder:
     // public static int rangefinderPort = 1;
     // public static int rangefinderModule = 1;
-	public static Jaguar jaguarLeftBack;
-	public static Jaguar jaguarLeftFront;
-	public static Victor victorRightFront;
-	public static Victor victorRightBack;
+	public static VictorSP victorLeftBack;
+	public static VictorSP victorLeftFront;
+	public static VictorSP victorRightFront;
+	public static VictorSP victorRightBack;
+	private static final short BACK_LEFT_PORT = 2;
+	private static final short FRONT_LEFT_PORT = 1;
+	private static final short BACK_RIGHT_PORT = 4;
+	private static final short FRONT_RIGHT_PORT = 3;
+	public static USBCamera cameraFront;
 	
 	public static AHRS ahrs;
 	public static RobotDrive driveTrain;
 	public static void init(){
-		jaguarLeftBack = new Jaguar(2);
-    	jaguarLeftFront = new Jaguar(3);
-    	victorRightFront = new Victor(0);
-    	victorRightBack = new Victor(1);
+		victorLeftBack = new VictorSP(BACK_LEFT_PORT);
+    	victorLeftFront = new VictorSP(FRONT_LEFT_PORT);
+    	victorRightFront = new VictorSP(FRONT_RIGHT_PORT);
+    	victorRightBack = new VictorSP(BACK_RIGHT_PORT);
     	driveTrain = new RobotDrive(
-    	        	jaguarLeftBack,
-    	        	jaguarLeftFront,
+    	        	victorLeftBack,
+    	        	victorLeftFront,
     	        	victorRightFront,
     	        	victorRightBack
     	  		); 
+    	driveTrain.setSafetyEnabled(false);
     	ahrs = new AHRS(SPI.Port.kMXP);
-    	driveTrain.setExpiration(.1);
+//    	cameraFront = new USBCamera("cam0");
 	}
 }

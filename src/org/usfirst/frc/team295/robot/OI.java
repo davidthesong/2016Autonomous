@@ -51,20 +51,20 @@ public class OI {
     // until it is finished as determined by it's isFinished method.
     // button.whenReleased(new ExampleCommand());
 	public OI(){
-		joystick = new Joystick(0);
-		buttonTurn = new JoystickButton(joystick,1);
-		buttonDrive  = new JoystickButton(joystick, 2);
-		buttonReset = new JoystickButton(joystick,3);
-		buttonTurnO = new JoystickButton(joystick,4);
-		buttonAuto = new JoystickButton(joystick,5);
-//		buttonTurn.whenPressed(new PIDTurn(90 + Globals.dError));
-		buttonTurn.whenPressed(new PIDTurnLeft(90));
-		buttonAuto.whenPressed(new Autonomous());
-		buttonTurnO.whenPressed(new PIDTurnRight(90));
-		buttonDrive.whenPressed(new AutoDrive(1,.25,1));
-//		buttonDrive.whenActive(new PIDTurnRight(90));
-		buttonReset.whenPressed(new Reset());
-		
+//		joystick = new Joystick(0);
+//		buttonTurn = new JoystickButton(joystick,1);
+//		buttonDrive  = new JoystickButton(joystick, 2);
+//		buttonReset = new JoystickButton(joystick,3);
+//		buttonTurnO = new JoystickButton(joystick,4);
+////		buttonAuto = new JoystickButton(joystick,5);
+////		buttonTurn.whenPressed(new PIDTurn(90 + Globals.dError));
+//		buttonTurn.whenPressed(new PIDTurnLeft(90));
+////		buttonAuto.whenPressed(new Autonomous());
+//		buttonTurnO.whenPressed(new PIDTurnRight(90));
+//		buttonDrive.whenPressed(new AutoDrive(1,.25,1));
+////		buttonDrive.whenActive(new PIDTurnRight(90));
+//		buttonReset.whenPressed(new Reset());
+//		
 		SmartDashboard.putData("Autonomous", new Autonomous());
 		SmartDashboard.putData("Drive", new AutoDrive(1,.3,1));
 	}

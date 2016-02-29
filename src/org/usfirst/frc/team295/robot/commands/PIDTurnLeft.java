@@ -52,12 +52,12 @@ public class PIDTurnLeft extends Command{
 		
 		if(Timer.getFPGATimestamp()>dstartTime){
 			dstartTime += 0.0020;
-			if(dpointAngle > dendAngle -1){
-				dpointAngle +=-1;
+			if(dpointAngle > dendAngle - .5){
+				dpointAngle +=-.5;
 			}
 			else if(dpointAngle < (dendAngle - dturnAmount))
 			{
-				dpointAngle +=-1;
+				dpointAngle +=-.5;
 				if(dpointAngle < 0){
 					dpointAngle = 360 - dpointAngle;
 				}
@@ -92,7 +92,7 @@ public class PIDTurnLeft extends Command{
 	@Override
 	protected boolean isFinished() {
 		// TODO Auto-generated method stub
-		if(done && Robot.drivetrain.onTarget() || Math.abs(ahrs.getAngle() - dendAngle) <3){
+		if(done && Robot.drivetrain.onTarget() || Math.abs(ahrs.getAngle() - dendAngle) <1){
 			Globals.dError = dendAngle-ahrs.getAngle();
 			return true;
 		}
