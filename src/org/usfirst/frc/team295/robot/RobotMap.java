@@ -1,5 +1,7 @@
 package org.usfirst.frc.team295.robot;
 
+import java.net.Socket;
+
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.Jaguar;
@@ -37,6 +39,11 @@ public class RobotMap {
 	
 	public static AHRS ahrs;
 	public static RobotDrive driveTrain;
+	
+	public static Socket clientSocket = null;
+	public static boolean clientConnected = false;
+	
+	
 	public static void init(){
 		victorLeftBack = new VictorSP(BACK_LEFT_PORT);
     	victorLeftFront = new VictorSP(FRONT_LEFT_PORT);

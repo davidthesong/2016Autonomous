@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -58,7 +59,9 @@ public class Robot extends IterativeRobot {
     ByteBuffer data;
     Socket s;
     ServerSocket serversocket = null;
-    Thread ServerThread;
+    Thread ServerThread = null;
+    String delimiter = ";";
+    DataOutputStream dataOutputStream;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -120,6 +123,37 @@ public class Robot extends IterativeRobot {
 		
     }
     public void enabledPeriodic() throws IOException{
+//    	if(RobotMap.clientConnected == false && ServerThread == null){
+//    		ServerThread = new Thread(new Server(serversocket));
+//    		ServerThread.start();
+//    	}
+//    	if( RobotMap.clientConnected == true && ServerThread !=null){
+//    		
+//    		Socket s = RobotMap.clientSocket;
+//    		dataOutputStream = new DataOutputStream(s.getOutputStream());
+//
+//			ServerThread.interrupt();
+//    		ServerThread = null;
+////			System.out.println(br.readLine());
+////			System.out.println("Read Line");
+//			//TODO:Establish Order
+//    	}
+//		if( RobotMap.clientConnected == true){
+//			
+//			if(!RobotMap.clientSocket.isConnected()){
+//				RobotMap.clientConnected = false;
+//				s.close();
+//				RobotMap.clientSocket = null;
+//			}
+//			if(RobotMap.clientConnected){
+//				dataOutputStream.writeChars("1"+delimiter+RobotMap.ahrs.getAngle()+delimiter);
+//			}
+//			
+//    	}
+		
+    	
+//    	System.out.println(Boolean.toString(ServerThread==null )+ " " + RobotMap.clientConnected);
+    	
 //    	sessionIteration++;
 //    	sessionTimer.start();
   
@@ -197,7 +231,7 @@ public class Robot extends IterativeRobot {
         // continue until interrupted by another command, remove
         // this line or comment it out.
         if (autonomousCommand != null) autonomousCommand.cancel();
-        
+//        
         ServerThread = new Thread(new Server(serversocket));
 		ServerThread.start();
         double dZeroAngle = RobotMap.ahrs.getAngle();
@@ -235,8 +269,8 @@ public class Robot extends IterativeRobot {
 //        System.out.println("y"+ahrs.getDisplacementY());
 //        System.out.println("x"+ahrs.getDisplacementX());
 //        System.out.println("z"+ahrs.getDisplacementZ());
-        RobotMap.driveTrain.tankDrive(-1* oi.joystick.getRawAxis(1), -1 * oi.joystick.getRawAxis(5));
-        System.out.println(ahrs.getYaw());
+//        RobotMap.driveTrain.tankDrive(-1* oi.joystick.getRawAxis(1), -1 * oi.joystick.getRawAxis(5));
+//        System.out.println(ahrs.getYaw());
 //        RobotMap.driveTrain.drive(-1* oi.joystick.getRawAxis(1), -1 * oi.joystick.getRawAxis(5));
     }
     public static double getTimerValue(){

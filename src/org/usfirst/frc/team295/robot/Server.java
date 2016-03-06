@@ -19,24 +19,31 @@ public class Server implements Runnable{
 	public Server(ServerSocket s){
 		server = s;
 	}
+	int i ;
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		while(true){
 			try{
-				s = server.accept();
+				Socket s = server.accept();
+//				if(s.isConnected()){
+//					RobotMap.clientSocket = s;
+//					RobotMap.clientConnected = true;
+//				}
+//				
 				DataOutputStream dataOutputStream = new DataOutputStream(s.getOutputStream());
-				DataInputStream in = new DataInputStream(s.getInputStream());
-				System.out.println("Client Connected");
-
-//				System.out.println(br.readLine());
-//				System.out.println("Read Line");
-				dataOutputStream.writeChars("1"+delimiter+"2"+delimiter+"3"+delimiter);
-				//TODO:Establish Order
+				do{
+				dataOutputStream.writeChars(i+delimiter+RobotMap.ahrs.getAngle()+delimiter);
+				i++;
+				Thread.sleep(33);
+				}while(s.isConnected());
+				
+				s.close();
 				System.out.println("Sent Line");
 					
 				System.out.println("Socket Closed ");
-				s.close();
+				
+				
 				
 			}catch (SocketTimeoutException s){
 				System.out.println("Timed Out");
