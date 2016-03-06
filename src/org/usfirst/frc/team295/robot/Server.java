@@ -33,7 +33,9 @@ public class Server implements Runnable{
 //				
 				DataOutputStream dataOutputStream = new DataOutputStream(s.getOutputStream());
 				do{
-				dataOutputStream.writeChars(i+delimiter+RobotMap.ahrs.getAngle()+delimiter);
+				dataOutputStream.writeChars("bearing"+delimiter+RobotMap.ahrs.getAngle()+ delimiter +
+						"shooter" + delimiter + "45" + delimiter + "arm1" + delimiter+ "30"
+						+ delimiter + "arm2" + delimiter + "25" + delimiter + "chassis" + delimiter+ RobotMap.ahrs.getPitch());
 				i++;
 				Thread.sleep(33);
 				}while(s.isConnected());
